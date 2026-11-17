@@ -1,0 +1,947 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7fa">
+  <meta name="description" content="Encuesta académica para la evaluación subjetiva de algoritmos de magnificación de movimiento en video.">
+  <title>Evaluación de magnificación de movimiento | Estudio académico</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #1d2b3a;
+      --muted: #64748b;
+      --line: #dce4ec;
+      --paper: #fff;
+      --canvas: #f5f7fa;
+      --accent: #176b87;
+      --accent-dark: #10546b;
+      --accent-soft: #e8f3f6;
+      --success: #176b50;
+      --danger: #a33b3b;
+      --shadow: 0 16px 48px rgb(26 46 66 / 8%);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      margin: 0;
+      color: var(--ink);
+      background: var(--canvas);
+      line-height: 1.55;
+    }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    .site-header {
+      border-bottom: 1px solid var(--line);
+      background: rgb(255 255 255 / 94%);
+    }
+    .header-inner, main, .footer-inner {
+      width: min(100% - 32px, 1040px);
+      margin-inline: auto;
+    }
+    .header-inner {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 11px;
+      color: #fff;
+      background: var(--accent);
+      font-size: 19px;
+      font-weight: 700;
+    }
+    .brand-title { margin: 0; font-size: 14px; font-weight: 700; letter-spacing: .01em; }
+    .brand-subtitle { margin: 2px 0 0; color: var(--muted); font-size: 12px; }
+    .progress-meta { min-width: 230px; text-align: right; color: var(--muted); font-size: 12px; }
+    .progress-track { height: 6px; margin-top: 6px; overflow: hidden; border-radius: 99px; background: #e9eef2; }
+    .progress-fill { width: 0; height: 100%; background: var(--accent); transition: width .2s ease; }
+    main { min-height: calc(100vh - 135px); padding-block: 34px 52px; }
+    .card {
+      width: min(100%, 820px);
+      margin-inline: auto;
+      padding: clamp(22px, 5vw, 42px);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 750;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    h1, h2, h3 { line-height: 1.25; }
+    h1 { max-width: 720px; margin: 0; font-size: clamp(26px, 4vw, 36px); letter-spacing: -.035em; }
+    h2 { margin: 0; font-size: clamp(21px, 3vw, 27px); letter-spacing: -.02em; }
+    h3 { margin: 0; font-size: 16px; }
+    p { margin: 12px 0 0; }
+    .intro { max-width: 680px; color: var(--muted); font-size: 15px; }
+    .notice, .instruction-box {
+      margin-top: 24px;
+      padding: 17px 18px;
+      border: 1px solid #d6e6eb;
+      border-radius: 12px;
+      background: #f3f9fa;
+      color: #344b5c;
+      font-size: 14px;
+    }
+    .notice strong { color: var(--ink); }
+    .field { margin-top: 24px; }
+    .field label, .field-title { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 700; }
+    .question-group {
+      margin: 22px 0 0;
+      padding: 0;
+      border: 0;
+    }
+    .question-group legend { margin-bottom: 9px; font-size: 14px; font-weight: 700; }
+    .choice-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .choice-option {
+      min-height: 40px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 11px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: #35485a;
+      background: #fff;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .choice-option:has(input:checked) {
+      border-color: var(--accent);
+      color: var(--accent-dark);
+      background: var(--accent-soft);
+    }
+    .choice-option input { margin: 0; accent-color: var(--accent); }
+    .text-input {
+      width: min(100%, 400px);
+      min-height: 46px;
+      padding: 10px 12px;
+      border: 1px solid #cbd5df;
+      border-radius: 9px;
+      color: var(--ink);
+      background: #fff;
+    }
+    .text-input:focus, button:focus-visible, input:focus-visible {
+      outline: 3px solid rgb(23 107 135 / 22%);
+      outline-offset: 2px;
+    }
+    .consent-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      margin-top: 20px;
+      color: #35485a;
+      font-size: 14px;
+    }
+    .consent-row input { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--accent); }
+    .actions { display: flex; justify-content: space-between; gap: 12px; margin-top: 28px; }
+    .button {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 17px;
+      border: 1px solid transparent;
+      border-radius: 9px;
+      font-size: 14px;
+      font-weight: 700;
+      transition: background .15s ease, border-color .15s ease, transform .15s ease;
+    }
+    .button:hover:not(:disabled) { transform: translateY(-1px); }
+    .button-primary { color: white; background: var(--accent); }
+    .button-primary:hover:not(:disabled) { background: var(--accent-dark); }
+    .button-secondary { color: #33475b; border-color: var(--line); background: white; }
+    .button-secondary:hover:not(:disabled) { background: #f4f7f9; }
+    .button:disabled { cursor: not-allowed; opacity: .48; }
+    .step-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .step-count {
+      flex: 0 0 auto;
+      padding: 5px 9px;
+      border: 1px solid var(--line);
+      border-radius: 99px;
+      color: var(--muted);
+      background: #f8fafb;
+      font-size: 12px;
+      font-weight: 650;
+    }
+    .step-description { margin-top: 8px; color: var(--muted); font-size: 14px; }
+    .video-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 20px; }
+    .video-panel { min-width: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: #111820; }
+    .video-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 10px 12px;
+      color: #e8eef3;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .video-label span:last-child { color: #aebdca; font-weight: 500; }
+    video { display: block; width: 100%; aspect-ratio: 16 / 9; background: #080c10; object-fit: contain; }
+    .video-tools {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 9px 10px;
+      color: #b6c4cf;
+      font-size: 11px;
+    }
+    .fullscreen-button {
+      min-height: 32px;
+      padding: 5px 9px;
+      border: 1px solid #465563;
+      border-radius: 7px;
+      color: #f1f5f8;
+      background: #202c36;
+      font-size: 11px;
+      font-weight: 650;
+    }
+    .fullscreen-button:hover { background: #2b3a46; }
+    .video-error { display: none; padding: 8px 11px 11px; color: #ffc2b9; font-size: 12px; }
+    .video-panel.has-error .video-error { display: block; }
+    .rating-section { margin-top: 24px; }
+    .rating-section + .rating-section { margin-top: 19px; }
+    .rating-label { display: block; margin-bottom: 9px; font-size: 14px; font-weight: 700; }
+    .rating-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(116px, 1fr)); gap: 8px; }
+    .rating-options.scale-seven { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+    .rating-button {
+      min-height: 56px;
+      padding: 8px 6px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      color: #35485a;
+      background: white;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    .rating-button strong { display: block; margin-bottom: 2px; font-size: 14px; }
+    .rating-button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent-dark); background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent); }
+    .sync-row { margin-top: 14px; }
+    .sync-button { color: var(--accent-dark); border-color: #c8dfe6; background: #f2f8fa; }
+    .status-message {
+      margin-top: 18px;
+      padding: 11px 13px;
+      border-radius: 9px;
+      color: #5b4421;
+      background: #fff8e9;
+      font-size: 13px;
+    }
+    .status-message.error { color: #832f2f; background: #fff0ef; }
+    .hidden { display: none !important; }
+    .thank-you { text-align: center; }
+    .thank-icon {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      color: var(--success);
+      background: #e8f5ef;
+      font-size: 27px;
+      font-weight: 700;
+    }
+    .site-footer { border-top: 1px solid var(--line); color: var(--muted); background: #fff; font-size: 12px; }
+    .footer-inner { padding-block: 18px; }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    @media (max-width: 640px) {
+      .header-inner, main, .footer-inner { width: min(100% - 24px, 1040px); }
+      .header-inner { min-height: 68px; }
+      .brand-mark { width: 36px; height: 36px; }
+      .brand-title { max-width: 210px; font-size: 12px; }
+      .brand-subtitle { font-size: 10px; }
+      .progress-meta { min-width: 94px; max-width: 112px; font-size: 10px; }
+      main { padding-block: 20px 34px; }
+      .card { border-radius: 14px; }
+      .video-grid { grid-template-columns: 1fr; }
+      .rating-options.scale-seven { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .rating-button { min-height: 53px; }
+      .actions { align-items: stretch; }
+      .actions .button { flex: 1; padding-inline: 10px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">M</div>
+        <div>
+          <p class="brand-title">Evaluación de magnificación de movimiento</p>
+          <p class="brand-subtitle">Estudio académico · Evaluación subjetiva</p>
+        </div>
+      </div>
+      <div id="progress-meta" class="progress-meta" aria-live="polite">
+        <span id="progress-label">Información inicial</span>
+        <div class="progress-track" role="progressbar" aria-label="Progreso de la evaluación" aria-valuemin="0" aria-valuemax="54" aria-valuenow="0">
+          <div id="progress-fill" class="progress-fill"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <form id="survey-form" name="evaluacion-magnificacion" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+      <input type="hidden" name="form-name" value="evaluacion-magnificacion">
+      <p class="sr-only">
+        <label>No completar: <input name="bot-field"></label>
+      </p>
+      <input type="hidden" name="participant_id" value="">
+      <input type="hidden" name="consent" value="">
+      <input type="hidden" name="device" value="">
+      <input type="hidden" name="place" value="">
+      <input type="hidden" name="lighting" value="">
+      <input type="hidden" name="vision" value="">
+      <input type="hidden" name="orientation_fullscreen" value="">
+      <input type="hidden" name="final_comment" value="">
+      <input type="hidden" name="acr_p01_clarity" value=""><input type="hidden" name="acr_p01_naturalness" value=""><input type="hidden" name="acr_p01_stability" value="">
+      <input type="hidden" name="acr_p02_clarity" value=""><input type="hidden" name="acr_p02_naturalness" value=""><input type="hidden" name="acr_p02_stability" value="">
+      <input type="hidden" name="acr_p03_clarity" value=""><input type="hidden" name="acr_p03_naturalness" value=""><input type="hidden" name="acr_p03_stability" value="">
+      <input type="hidden" name="acr_p04_clarity" value=""><input type="hidden" name="acr_p04_naturalness" value=""><input type="hidden" name="acr_p04_stability" value="">
+      <input type="hidden" name="acr_p05_clarity" value=""><input type="hidden" name="acr_p05_naturalness" value=""><input type="hidden" name="acr_p05_stability" value="">
+      <input type="hidden" name="acr_p06_clarity" value=""><input type="hidden" name="acr_p06_naturalness" value=""><input type="hidden" name="acr_p06_stability" value="">
+      <input type="hidden" name="acr_p07_clarity" value=""><input type="hidden" name="acr_p07_naturalness" value=""><input type="hidden" name="acr_p07_stability" value="">
+      <input type="hidden" name="acr_p08_clarity" value=""><input type="hidden" name="acr_p08_naturalness" value=""><input type="hidden" name="acr_p08_stability" value="">
+      <input type="hidden" name="acr_p09_clarity" value=""><input type="hidden" name="acr_p09_naturalness" value=""><input type="hidden" name="acr_p09_stability" value="">
+      <input type="hidden" name="acr_p10_clarity" value=""><input type="hidden" name="acr_p10_naturalness" value=""><input type="hidden" name="acr_p10_stability" value="">
+      <input type="hidden" name="acr_p11_clarity" value=""><input type="hidden" name="acr_p11_naturalness" value=""><input type="hidden" name="acr_p11_stability" value="">
+      <input type="hidden" name="acr_p12_clarity" value=""><input type="hidden" name="acr_p12_naturalness" value=""><input type="hidden" name="acr_p12_stability" value="">
+      <input type="hidden" name="acr_p13_clarity" value=""><input type="hidden" name="acr_p13_naturalness" value=""><input type="hidden" name="acr_p13_stability" value="">
+      <input type="hidden" name="acr_p14_clarity" value=""><input type="hidden" name="acr_p14_naturalness" value=""><input type="hidden" name="acr_p14_stability" value="">
+      <input type="hidden" name="acr_p15_clarity" value=""><input type="hidden" name="acr_p15_naturalness" value=""><input type="hidden" name="acr_p15_stability" value="">
+      <input type="hidden" name="acr_p16_clarity" value=""><input type="hidden" name="acr_p16_naturalness" value=""><input type="hidden" name="acr_p16_stability" value="">
+      <input type="hidden" name="acr_p17_clarity" value=""><input type="hidden" name="acr_p17_naturalness" value=""><input type="hidden" name="acr_p17_stability" value="">
+      <input type="hidden" name="acr_p18_clarity" value=""><input type="hidden" name="acr_p18_naturalness" value=""><input type="hidden" name="acr_p18_stability" value="">
+      <input type="hidden" name="dsis_o01_p01" value=""><input type="hidden" name="dsis_o01_p02" value=""><input type="hidden" name="dsis_o01_p03" value="">
+      <input type="hidden" name="dsis_o02_p04" value=""><input type="hidden" name="dsis_o02_p05" value=""><input type="hidden" name="dsis_o02_p06" value="">
+      <input type="hidden" name="dsis_o03_p07" value=""><input type="hidden" name="dsis_o03_p08" value=""><input type="hidden" name="dsis_o03_p09" value="">
+      <input type="hidden" name="dsis_o04_p10" value=""><input type="hidden" name="dsis_o04_p11" value=""><input type="hidden" name="dsis_o04_p12" value="">
+      <input type="hidden" name="dsis_o05_p13" value=""><input type="hidden" name="dsis_o05_p14" value=""><input type="hidden" name="dsis_o05_p15" value="">
+      <input type="hidden" name="dsis_o06_p16" value=""><input type="hidden" name="dsis_o06_p17" value=""><input type="hidden" name="dsis_o06_p18" value="">
+      <input type="hidden" name="pc_o01_pair1" value=""><input type="hidden" name="pc_o01_pair2" value=""><input type="hidden" name="pc_o01_pair3" value="">
+      <input type="hidden" name="pc_o02_pair1" value=""><input type="hidden" name="pc_o02_pair2" value=""><input type="hidden" name="pc_o02_pair3" value="">
+      <input type="hidden" name="pc_o03_pair1" value=""><input type="hidden" name="pc_o03_pair2" value=""><input type="hidden" name="pc_o03_pair3" value="">
+      <input type="hidden" name="pc_o04_pair1" value=""><input type="hidden" name="pc_o04_pair2" value=""><input type="hidden" name="pc_o04_pair3" value="">
+      <input type="hidden" name="pc_o05_pair1" value=""><input type="hidden" name="pc_o05_pair2" value=""><input type="hidden" name="pc_o05_pair3" value="">
+      <input type="hidden" name="pc_o06_pair1" value=""><input type="hidden" name="pc_o06_pair2" value=""><input type="hidden" name="pc_o06_pair3" value="">
+      <div id="app" class="card" aria-live="polite"></div>
+    </form>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">Participación voluntaria · Respuestas asociadas únicamente a un identificador anónimo.</div>
+  </footer>
+
+  <script>
+    "use strict";
+
+    const algorithms = ["EVM", "Phase-Based", "Riesz"];
+    const DRIVE_ENDPOINT = "https://script.google.com/macros/s/AKfycbxeiBKy9K-iMmTv064A2CJK7BGNh4SSsaiUNuANrGb5Naa8i8qoJRnN8wj5aubWwapU/exec";
+    const pairDefinitions = [[0, 1], [0, 2], [1, 2]];
+    const acrAttributes = [
+      { key: "clarity", label: "Claridad del movimiento magnificado" },
+      { key: "naturalness", label: "Naturalidad visual (ausencia de artefactos)" },
+      { key: "stability", label: "Estabilidad temporal" }
+    ];
+    const acrScale = [
+      { value: 5, label: "Excelente" },
+      { value: 4, label: "Buena" },
+      { value: 3, label: "Regular" },
+      { value: 2, label: "Pobre" },
+      { value: 1, label: "Mala" }
+    ];
+    const dsisScale = [
+      { value: 5, label: "Imperceptibles" },
+      { value: 4, label: "Perceptibles, pero no molestas" },
+      { value: 3, label: "Ligeramente molestas" },
+      { value: 2, label: "Molestas" },
+      { value: 1, label: "Muy molestas" }
+    ];
+    const pcScale = [
+      { value: -3, label: "Mucho peor" },
+      { value: -2, label: "Peor" },
+      { value: -1, label: "Ligeramente peor" },
+      { value: 0, label: "Igual" },
+      { value: 1, label: "Ligeramente mejor" },
+      { value: 2, label: "Mejor" },
+      { value: 3, label: "Mucho mejor" }
+    ];
+    const progressSections = [
+      { type: "acr", label: "ACR · valoración individual" },
+      { type: "dsis", label: "DSIS · original y procesado" },
+      { type: "pc", label: "PC · comparación por pares" }
+    ];
+
+    // Los archivos deben seguir esta convención dentro de ./videos.
+    const videoPath = code => `./videos/${code.toLowerCase()}.mp4`;
+    const trials = buildTrials();
+    const answers = { acr: {}, dsis: {}, pc: {} };
+    const demographics = {
+      device: "",
+      place: "",
+      lighting: "",
+      vision: "",
+      orientation_fullscreen: ""
+    };
+    const watched = new Set();
+    const app = document.getElementById("app");
+    const form = document.getElementById("survey-form");
+    const progressFill = document.getElementById("progress-fill");
+    const progressLabel = document.getElementById("progress-label");
+    const progressBar = document.querySelector('[role="progressbar"]');
+    let activeSection = 0;
+    let activeTrial = 0;
+    let participantId = "";
+    let consentGiven = false;
+    let submissionBusy = false;
+
+    function pad2(number) {
+      return String(number).padStart(2, "0");
+    }
+
+    function buildTrials() {
+      const acr = [];
+      const dsis = [];
+      const pc = [];
+
+      for (let video = 1; video <= 6; video += 1) {
+        for (let algorithm = 0; algorithm < algorithms.length; algorithm += 1) {
+          const processedNumber = (video - 1) * 3 + algorithm + 1;
+          const original = `O${pad2(video)}`;
+          const processed = `P${pad2(processedNumber)}`;
+          acr.push({ code: `acr-${processed.toLowerCase()}`, original, processed });
+          dsis.push({ code: `dsis-${original.toLowerCase()}-${processed.toLowerCase()}`, original, processed });
+        }
+
+        const base = (video - 1) * 3 + 1;
+        pairDefinitions.forEach(([firstAlgorithm, secondAlgorithm], pairIndex) => {
+          pc.push({
+            code: `pc-o${pad2(video)}-pair${pairIndex + 1}`,
+            original: `O${pad2(video)}`,
+            first: `P${pad2(base + firstAlgorithm)}`,
+            second: `P${pad2(base + secondAlgorithm)}`
+          });
+        });
+      }
+      return [acr, dsis, pc];
+    }
+
+    function setNetlifyField(name, value) {
+      const field = form.elements.namedItem(name);
+      if (field) field.value = String(value);
+    }
+
+    function escapeHTML(value) {
+      return String(value).replace(/[&<>"']/g, character => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      })[character]);
+    }
+
+    function updateProgress() {
+      if (activeSection === -2) {
+        progressFill.style.width = "100%";
+        progressBar.setAttribute("aria-valuenow", "54");
+        progressLabel.textContent = "Envío de respuestas";
+        return;
+      }
+      const current = activeSection * 18 + activeTrial;
+      const percent = Math.round((current / 54) * 100);
+      progressFill.style.width = `${percent}%`;
+      progressBar.setAttribute("aria-valuenow", String(current));
+      progressLabel.textContent = activeSection < 0
+        ? "Información inicial"
+        : `${progressSections[activeSection].label} · ${activeTrial + 1}/18`;
+    }
+
+    function renderWelcome() {
+      activeSection = -1;
+      updateProgress();
+      app.innerHTML = `
+        <p class="eyebrow">Protocolo de investigación · Video</p>
+        <h1>Evaluación subjetiva de la magnificación de movimiento</h1>
+        <p class="intro">Esta encuesta compara videos en los que se resaltan movimientos pequeños que normalmente casi no se notan, como una vibración leve o un pulso. No se trata de hacer zoom ni de agrandar la imagen. No hay respuestas correctas o incorrectas; responda según lo que usted perciba.</p>
+        <div class="notice">
+          <strong>Antes de comenzar</strong>
+          <p>La participación es voluntaria y las respuestas se utilizarán con fines académicos. Se registrará un identificador anónimo, sin solicitar datos personales. Puede abandonar la evaluación antes de enviarla.</p>
+          <p>La evaluación comprende 54 ensayos en tres partes. Se recomienda usar un lugar tranquilo, orientación horizontal y pantalla completa. Observe cada video completo.</p>
+          <p><strong>¿Qué significa “artefacto”?</strong> Es un defecto visual añadido al procesar el video, por ejemplo, un contorno duplicado, parpadeo, borrosidad o una deformación que no estaba en la escena. El movimiento resaltado a propósito no es un defecto.</p>
+          <p><strong>¿Qué debe observar?</strong> Si el movimiento se distingue con claridad, si el video parece natural y si se ve estable y fluido. No necesita conocer los nombres de los métodos ni saber cómo funcionan.</p>
+        </div>
+        <div class="field">
+          <label for="participant-id">Identificador anónimo de participante</label>
+          <input class="text-input" id="participant-id" maxlength="40" autocomplete="off" required placeholder="Ej.: P-001" value="${escapeHTML(participantId)}">
+        </div>
+        <label class="consent-row">
+          <input id="consent-check" type="checkbox" required ${consentGiven ? "checked" : ""}>
+          <span>He leído la información anterior y acepto participar voluntariamente en esta evaluación.</span>
+        </label>
+        <div class="actions">
+          <span></span>
+          <button class="button button-primary" id="begin-button" type="button">Comenzar evaluación <span aria-hidden="true">→</span></button>
+        </div>
+      `;
+      document.getElementById("begin-button").addEventListener("click", () => {
+        const idInput = document.getElementById("participant-id");
+        const consent = document.getElementById("consent-check");
+        if (!idInput.reportValidity() || !consent.reportValidity()) return;
+        participantId = idInput.value.trim();
+        if (!participantId) {
+          idInput.setCustomValidity("Ingrese un identificador anónimo.");
+          idInput.reportValidity();
+          idInput.setCustomValidity("");
+          return;
+        }
+        setNetlifyField("participant_id", participantId);
+        setNetlifyField("consent", "Sí");
+        consentGiven = true;
+        renderDemographics();
+      });
+    }
+
+    function renderDemographics() {
+      activeSection = -1;
+      updateProgress();
+      progressLabel.textContent = "Condiciones de visualización";
+      const questions = [
+        {
+          key: "device",
+          title: "¿Qué dispositivo utilizará para visualizar los videos?",
+          options: ["Teléfono celular", "Tableta", "Computadora portátil", "Computadora de escritorio"]
+        },
+        {
+          key: "place",
+          title: "¿En qué lugar realizará la evaluación?",
+          options: ["Casa", "Universidad", "Trabajo", "Otro lugar"]
+        },
+        {
+          key: "lighting",
+          title: "¿Cómo considera la iluminación del lugar donde realizará la prueba?",
+          options: ["Iluminación tenue", "Iluminación moderada", "Iluminación intensa"]
+        },
+        {
+          key: "vision",
+          title: "¿Tiene visión normal o corregida mediante lentes?",
+          options: ["Sí", "No", "No estoy seguro/a"]
+        },
+        {
+          key: "orientation_fullscreen",
+          title: "¿Puede visualizar los videos en orientación horizontal y a pantalla completa?",
+          options: ["Sí", "No"]
+        }
+      ];
+
+      app.innerHTML = `
+        <p class="eyebrow">Información general</p>
+        <h2>Condiciones de visualización</h2>
+        <p class="intro">Estas preguntas describen las condiciones en las que realizará la evaluación. Seleccione una respuesta para cada pregunta.</p>
+        ${questions.map(question => `
+          <fieldset class="question-group">
+            <legend>${question.title}</legend>
+            <div class="choice-options">
+              ${question.options.map((option, index) => `
+                <label class="choice-option">
+                  <input type="radio" name="ui_${question.key}" value="${escapeHTML(option)}" required
+                    ${demographics[question.key] === option ? "checked" : ""}
+                    ${index === 0 ? 'aria-describedby="demographics-help"' : ""}>
+                  <span>${escapeHTML(option)}</span>
+                </label>
+              `).join("")}
+            </div>
+          </fieldset>
+        `).join("")}
+        <p id="demographics-help" class="sr-only">Respuesta obligatoria. Las opciones de cada pregunta se agrupan.</p>
+        <div id="demographics-status" class="status-message hidden" role="alert"></div>
+        <div class="actions">
+          <button type="button" class="button button-secondary" id="demographics-back">← Anterior</button>
+          <button type="button" class="button button-primary" id="demographics-next">Continuar →</button>
+        </div>
+      `;
+
+      questions.forEach(question => {
+        app.querySelectorAll(`input[name="ui_${question.key}"]`).forEach(input => {
+          input.addEventListener("change", () => {
+            demographics[question.key] = input.value;
+            setNetlifyField(question.key, input.value);
+          });
+        });
+      });
+
+      document.getElementById("demographics-back").addEventListener("click", renderWelcome);
+      document.getElementById("demographics-next").addEventListener("click", () => {
+        const missing = questions.find(question => !demographics[question.key]);
+        if (missing) {
+          const firstOption = app.querySelector(`input[name="ui_${missing.key}"]`);
+          firstOption.reportValidity();
+          const status = document.getElementById("demographics-status");
+          status.textContent = "Responda todas las preguntas para continuar.";
+          status.classList.remove("hidden");
+          status.classList.add("error");
+          return;
+        }
+        activeSection = 0;
+        activeTrial = 0;
+        renderTrial();
+      });
+    }
+
+    function formatScore(value, label) {
+      const shown = value > 0 ? `+${value}` : String(value);
+      return `<strong>${shown}</strong>${escapeHTML(label)}`;
+    }
+
+    function ratingButtons(scale, currentValue, onSelect, seven = false) {
+      return `<div class="rating-options${seven ? " scale-seven" : ""}">${scale.map(option => `
+        <button type="button" class="rating-button" data-score="${option.value}" aria-pressed="${currentValue === option.value}">
+          ${formatScore(option.value, option.label)}
+        </button>
+      `).join("")}</div>`;
+    }
+
+    function videoPanel(code, label, slot) {
+      const id = `video-${slot}`;
+      const safeCode = escapeHTML(code);
+      const source = escapeHTML(videoPath(code));
+      return `
+        <section class="video-panel" data-video-panel="${slot}" aria-label="${escapeHTML(label)}">
+          <div class="video-label"><span>${escapeHTML(label)}</span><span>${safeCode}</span></div>
+          <video id="${id}" controls playsinline preload="metadata" aria-label="${escapeHTML(label)} ${safeCode}">
+            <source src="${source}" type="video/mp4">
+            Su navegador no puede reproducir video HTML5.
+          </video>
+          <div class="video-tools">
+            <span data-watch-status="${slot}">Reproduzca el video hasta el final.</span>
+            <button type="button" class="fullscreen-button" data-fullscreen="${id}" aria-label="Ver ${safeCode} en pantalla completa">⛶ Pantalla completa</button>
+          </div>
+          <div class="video-error" role="status">No se pudo cargar ${safeCode}. Compruebe que exista ${source} en el despliegue.</div>
+        </section>`;
+    }
+
+    function makeTrialMarkup(sectionIndex, trial, saved) {
+      if (sectionIndex === 0) {
+        return `
+          <div class="video-grid">${videoPanel(trial.processed, "Video procesado", "main")}</div>
+          <section class="rating-section">
+            <h3>Valore el video procesado</h3>
+            <p class="step-description">Escala ACR: 5 Excelente · 4 Buena · 3 Regular · 2 Pobre · 1 Mala.</p>
+            ${acrAttributes.map(attribute => `
+              <div class="rating-section">
+                <span class="rating-label">${attribute.label}</span>
+                <p class="step-description">${attribute.key === "clarity" ? "¿Se distingue el movimiento que se quiso resaltar?" : attribute.key === "naturalness" ? "¿Parece un video natural, sin contornos dobles, parpadeos o deformaciones extrañas?" : "¿Se ve fluido y constante, sin cambios bruscos ni parpadeo?"}</p>
+                ${ratingButtons(acrScale, saved[attribute.key], null)}
+              </div>
+            `).join("")}
+          </section>`;
+      }
+      if (sectionIndex === 1) {
+        return `
+          <div class="video-grid">
+            ${videoPanel(trial.original, "Primero · video original", "main")}
+            ${videoPanel(trial.processed, "Segundo · video procesado", "second")}
+          </div>
+          <section class="rating-section">
+            <h3>Califique las alteraciones visuales</h3>
+            <p class="step-description">“Artefactos” son defectos añadidos, como parpadeo, bordes dobles o deformaciones. No cuente como defecto el movimiento que se quiso resaltar. Una puntuación alta significa que los defectos molestan poco o nada.</p>
+            ${ratingButtons(dsisScale, saved.score, null)}
+          </section>`;
+      }
+      return `
+        <div class="video-grid">
+          ${videoPanel(trial.first, "Primer resultado (A)", "main")}
+          ${videoPanel(trial.second, "Segundo resultado (B)", "second")}
+        </div>
+        <div class="sync-row">
+          <button type="button" class="button button-secondary sync-button" id="sync-button">▶ Reproducir ambos resultados</button>
+        </div>
+        <section class="rating-section">
+          <h3>Compare los dos resultados</h3>
+          <p class="step-description">Ambos corresponden al mismo video original. Indique si el segundo (B) se ve peor o mejor que el primero (A), considerando qué tan claro, natural y estable parece. No hay una opción correcta.</p>
+          ${ratingButtons(pcScale, saved.score, null, true)}
+        </section>`;
+    }
+
+    function getSavedAnswer(sectionIndex, trial) {
+      const section = ["acr", "dsis", "pc"][sectionIndex];
+      return answers[section][trial.code] || {};
+    }
+
+    function renderTrial() {
+      updateProgress();
+      const sectionName = progressSections[activeSection].label;
+      const trial = trials[activeSection][activeTrial];
+      const saved = getSavedAnswer(activeSection, trial);
+      const descriptions = [
+        "Observe el video completo. Valore si el movimiento resaltado se distingue, si la imagen parece natural y si se ve fluida.",
+        "Observe primero el original y luego el video con el movimiento resaltado. Juzgue los defectos añadidos, no el movimiento resaltado a propósito.",
+        "Compare dos resultados del mismo video. Indique si B se ve peor o mejor que A; los nombres de los métodos no importan."
+      ];
+      app.innerHTML = `
+        <div class="step-top">
+          <div>
+            <p class="eyebrow">${escapeHTML(sectionName)}</p>
+            <h2>${activeSection === 0 ? "Valoración individual" : activeSection === 1 ? "Original y procesado" : "Comparación por pares"}</h2>
+            <p class="step-description">${descriptions[activeSection]}</p>
+          </div>
+          <span class="step-count">Ensayo ${activeTrial + 1} de 18</span>
+        </div>
+        ${makeTrialMarkup(activeSection, trial, saved)}
+        <div id="trial-status" class="status-message hidden" role="status"></div>
+        <div class="actions">
+          <button type="button" class="button button-secondary" id="back-button">← Anterior</button>
+          <button type="button" class="button button-primary" id="next-button">${activeSection === 2 && activeTrial === 17 ? "Finalizar evaluación" : "Siguiente"} →</button>
+        </div>
+      `;
+      bindTrialEvents(trial, saved);
+    }
+
+    function getRequiredVideoSlots(sectionIndex) {
+      return sectionIndex === 0 ? ["main"] : ["main", "second"];
+    }
+
+    function bindTrialEvents(trial, saved) {
+      const requiredSlots = getRequiredVideoSlots(activeSection);
+      requiredSlots.forEach(slot => {
+        const video = document.getElementById(`video-${slot}`);
+        const watchKey = `${trial.code}:${slot}`;
+        const status = document.querySelector(`[data-watch-status="${slot}"]`);
+        if (watched.has(watchKey)) status.textContent = "Video observado hasta el final.";
+        video.addEventListener("ended", () => {
+          watched.add(watchKey);
+          status.textContent = "Video observado hasta el final.";
+          updateNextButton();
+        });
+        video.addEventListener("error", () => {
+          document.querySelector(`[data-video-panel="${slot}"]`).classList.add("has-error");
+        });
+        document.querySelector(`[data-fullscreen="video-${slot}"]`).addEventListener("click", () => enterFullscreen(video));
+      });
+
+      app.querySelectorAll(".rating-button").forEach(button => {
+        button.addEventListener("click", () => {
+          const value = Number(button.dataset.score);
+          const answerSection = ["acr", "dsis", "pc"][activeSection];
+          if (activeSection === 0) {
+            const attributeIndex = Array.from(app.querySelectorAll(".rating-section")).indexOf(button.closest(".rating-section")) - 1;
+            const attribute = acrAttributes[attributeIndex];
+            answers.acr[trial.code] = { ...(answers.acr[trial.code] || {}), [attribute.key]: value };
+            const fieldCode = trial.processed.toLowerCase();
+            setNetlifyField(`acr_${fieldCode}_${attribute.key}`, value);
+          } else {
+            answers[answerSection][trial.code] = { score: value };
+            const fieldName = activeSection === 1
+              ? `dsis_${trial.original.toLowerCase()}_${trial.processed.toLowerCase()}`
+              : trial.code;
+            setNetlifyField(fieldName.replaceAll("-", "_"), value);
+          }
+          renderTrial();
+        });
+      });
+
+      const syncButton = document.getElementById("sync-button");
+      if (syncButton) {
+        syncButton.addEventListener("click", async () => {
+          const videos = [document.getElementById("video-main"), document.getElementById("video-second")];
+          videos.forEach(video => { video.currentTime = 0; });
+          const results = await Promise.allSettled(videos.map(video => video.play()));
+          if (results.some(result => result.status === "rejected")) {
+            showStatus("No fue posible iniciar ambos videos. Use los controles de cada reproductor.", true);
+          }
+        });
+      }
+
+      document.getElementById("back-button").addEventListener("click", previousTrial);
+      document.getElementById("next-button").addEventListener("click", nextTrial);
+      updateNextButton();
+    }
+
+    function updateNextButton() {
+      const nextButton = document.getElementById("next-button");
+      if (!nextButton) return;
+      const trial = trials[activeSection][activeTrial];
+      const requiredSlots = getRequiredVideoSlots(activeSection);
+      const watchedAll = requiredSlots.every(slot => watched.has(`${trial.code}:${slot}`));
+      const answer = getSavedAnswer(activeSection, trial);
+      const answered = activeSection === 0
+        ? acrAttributes.every(attribute => Number.isInteger(answer[attribute.key]))
+        : Number.isInteger(answer.score);
+      nextButton.disabled = !watchedAll || !answered;
+    }
+
+    async function enterFullscreen(element) {
+      try {
+        if (element.requestFullscreen) await element.requestFullscreen();
+        else if (element.webkitEnterFullscreen) element.webkitEnterFullscreen();
+        else showStatus("La pantalla completa no está disponible en este navegador.", true);
+      } catch (error) {
+        showStatus(`No se pudo activar la pantalla completa: ${error.message}`, true);
+      }
+    }
+
+    function showStatus(message, isError = false) {
+      const status = document.getElementById("trial-status");
+      if (!status) return;
+      status.textContent = message;
+      status.classList.toggle("error", isError);
+      status.classList.remove("hidden");
+    }
+
+    function previousTrial() {
+      if (activeTrial > 0) activeTrial -= 1;
+      else if (activeSection > 0) {
+        activeSection -= 1;
+        activeTrial = 17;
+      } else if (activeSection === 0) {
+        renderDemographics();
+        return;
+      } else {
+        renderWelcome();
+        return;
+      }
+      renderTrial();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function nextTrial() {
+      const button = document.getElementById("next-button");
+      if (button.disabled) return;
+      if (activeTrial < 17) activeTrial += 1;
+      else if (activeSection < 2) {
+        activeSection += 1;
+        activeTrial = 0;
+      } else {
+        renderCompletion();
+        return;
+      }
+      renderTrial();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderCompletion() {
+      activeSection = -2;
+      updateProgress();
+      app.innerHTML = `
+        <p class="eyebrow">Último paso</p>
+        <h2>Gracias por completar los ensayos</h2>
+        <div class="field">
+          <label for="final-comment">Comentario adicional (opcional)</label>
+          <input class="text-input" id="final-comment" maxlength="1000" placeholder="Puede dejar este campo en blanco.">
+        </div>
+        <div id="submit-status" class="status-message hidden" role="alert"></div>
+        <div class="actions">
+          <button type="button" class="button button-secondary" id="review-button">← Revisar respuestas</button>
+          <button type="button" class="button button-primary" id="submit-button">Enviar respuestas por correo</button>
+        </div>
+      `;
+      document.getElementById("review-button").addEventListener("click", () => {
+        activeSection = 2;
+        activeTrial = 17;
+        renderTrial();
+      });
+      document.getElementById("submit-button").addEventListener("click", submitSurvey);
+    }
+
+    async function submitSurvey() {
+      if (submissionBusy) return;
+      const submitButton = document.getElementById("submit-button");
+      const status = document.getElementById("submit-status");
+      const comment = document.getElementById("final-comment").value.trim();
+      const incomplete = Object.values(answers.acr).length !== 18
+        || Object.values(answers.acr).some(answer => !acrAttributes.every(attribute => Number.isInteger(answer[attribute.key])))
+        || Object.values(answers.dsis).length !== 18
+        || Object.values(answers.pc).length !== 18;
+      if (incomplete) {
+        status.textContent = "Faltan respuestas. Regrese a la evaluación y complete todos los ensayos.";
+        status.classList.remove("hidden");
+        status.classList.add("error");
+        return;
+      }
+      if (!DRIVE_ENDPOINT) {
+        status.textContent = "El envío por correo aún no está configurado. No se ha enviado ni guardado ninguna respuesta.";
+        status.classList.remove("hidden");
+        status.classList.add("error");
+        return;
+      }
+
+      setNetlifyField("final_comment", comment);
+      submissionBusy = true;
+      submitButton.disabled = true;
+      submitButton.textContent = "Enviando respuestas…";
+      status.classList.add("hidden");
+      try {
+        const fields = Object.fromEntries(Array.from(new FormData(form).entries())
+          .filter(([name]) => name !== "form-name" && name !== "bot-field" && !name.startsWith("ui_")));
+        const record = { submitted_at: new Date().toISOString(), ...fields };
+        await fetch(DRIVE_ENDPOINT, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=UTF-8" },
+          body: JSON.stringify(record)
+        });
+        renderThankYou();
+      } catch (error) {
+        submissionBusy = false;
+        submitButton.disabled = false;
+        submitButton.textContent = "Reintentar envío";
+        status.textContent = `No se pudo enviar la solicitud. Compruebe su conexión e inténtelo de nuevo. ${error.message}`;
+        status.classList.remove("hidden");
+        status.classList.add("error");
+      }
+    }
+
+    function renderThankYou() {
+      activeSection = -2;
+      progressLabel.textContent = "Evaluación enviada";
+      progressFill.style.width = "100%";
+      progressBar.setAttribute("aria-valuenow", "54");
+      app.innerHTML = `
+        <div class="thank-you">
+          <div class="thank-icon" aria-hidden="true">✓</div>
+          <p class="eyebrow">Registro completado</p>
+          <h2>Gracias por su participación</h2>
+          <p class="intro" style="margin-inline:auto">Se envió la solicitud al servidor para generar un CSV y remitirlo a <a href="mailto:patricio31998@gmail.com">patricio31998@gmail.com</a>. No se descargó ningún archivo en este dispositivo. La entrega depende de que el servicio esté configurado y autorizado.</p>
+        </div>
+      `;
+    }
+
+    form.addEventListener("submit", event => event.preventDefault());
+    renderWelcome();
+  </script>
+</body>
+</html>
